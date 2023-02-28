@@ -162,7 +162,7 @@ def analyse_sentiment(headline):
 with st.form("main form"):
     url = st.text_input('Enter SBS News Article URL in format: https://www.sbs.com.au/news/article/...', value="https://www.sbs.com.au/news/article/are-you-being-spied-on-by-a-foreign-government-australian-federal-police-want-to-hear-from-you/t5e2srqo1")
     md_categories = ['Named Entity Recognition', 'Sentiment Analysis', 'Article Summariser (top 3 sentences)']
-    nlp_task = st.selectbox("Select the type of metadata you would like to extract", md_categories)
+    nlp_task = st.selectbox("Select the algorithm you would like to use", md_categories)
 
     submitted = st.form_submit_button("Submit")
 
