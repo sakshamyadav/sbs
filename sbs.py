@@ -135,7 +135,7 @@ def summarise_article(article, num_sentences=3):
     #get the top N sentences with the highest scores
     summary_sentences = nlargest(num_sentences, sentence_scores, key=sentence_scores.get)
     #return the summary as a string
-    summary = ' '.join(summary_sentences)
+    summary = '\n \n'.join(summary_sentences)
 
     return summary
 
