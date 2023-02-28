@@ -54,12 +54,14 @@ def get_article(url):
 
     #clean up text by removing unwanted html elements
     article = article.replace('amp;', ' ')
-    article = article.replace('.', ' ')
     article = article.replace(',', ' ')
     article = article.replace('&', ' ')
     article = article.replace(';', ' ')
     article = article.replace('quot', ' ')
-
+    article = article.replace('lt', ' ')
+    article = article.replace('gt', ' ')
+    article = article.replace('apos', ' ')
+    article = article.replace('x2019', ' ')
 
     return headline, article
 
@@ -110,6 +112,7 @@ def summarise_article(article, num_sentences=3):
 
     words = preprocess_article(article)
 
+
     #calculate the word frequency for each word in the article
     word_freq = {}
     for word in words:
@@ -130,7 +133,6 @@ def summarise_article(article, num_sentences=3):
 
     #get the top N sentences with the highest scores
     summary_sentences = nlargest(num_sentences, sentence_scores, key=sentence_scores.get)
-
     #return the summary as a string
     summary = ' '.join(summary_sentences)
 
@@ -145,6 +147,10 @@ def analyse_sentiment(headline):
     :return: (polarity, subjectivity): (int,int), polarity and subjectivity of the article headline
     """
 
+    headline = headline.split()
+    headline = [h.lower() for h in headline if h.isalpha()]
+    headline = ' '.join(headline)
+    
     blob = TextBlob(headline)
     polarity = blob.sentiment.polarity
     subjectivity = blob.sentiment.subjectivity
@@ -153,8 +159,8 @@ def analyse_sentiment(headline):
 
 #create main streamlit form to accept inputs
 with st.form("main form"):
-    url = st.text_input('Enter SBS News Article URL')
-    md_categories = ['Named Entity Recognition', 'Sentiment Analysis', 'Article Summariser']
+    url = st.text_input('Enter SBS News Article URL in format: https://www.sbs.com.au/news/article/...', value="https://www.sbs.com.au/news/article/are-you-being-spied-on-by-a-foreign-government-australian-federal-police-want-to-hear-from-you/t5e2srqo1")
+    md_categories = ['Named Entity Recognition', 'Sentiment Analysis', 'Article Summariser (top 3 sentences)']
     nlp_task = st.selectbox("Select the type of metadata you would like to extract", md_categories)
 
     submitted = st.form_submit_button("Submit")
@@ -169,9 +175,9 @@ if submitted:
 
     elif nlp_task == "Sentiment Analysis":
         p, s = analyse_sentiment(headline)
-        st.write(f"Polarity: {p:.2f}")
-        st.write(f"Subjectivity: {s:.2f}")
+        st.write(f"Polarity (-1 to 1 indicating negativity to positivity): {p:.2f}")
+        st.write(f"Subjectivity (0 to 1 indicating objectivity to subjectivity): {s:.2f}")
 
-    elif nlp_task == "Article Summariser":
+    elif nlp_task == "Article Summariser (top 3 sentences)":
         summary = summarise_article(article)
         st.write(summary)
