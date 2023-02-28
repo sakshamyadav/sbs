@@ -160,7 +160,7 @@ def analyse_sentiment(headline):
 
 #create main streamlit form to accept inputs
 with st.form("main form"):
-    url = st.text_input('Enter SBS News Article URL in format: https://www.sbs.com.au/news/article/...', value="https://www.sbs.com.au/news/article/are-you-being-spied-on-by-a-foreign-government-australian-federal-police-want-to-hear-from-you/t5e2srqo1")
+    url = st.text_input('Enter SBS News Article URL (or just use the default article below)', value="https://www.sbs.com.au/news/article/are-you-being-spied-on-by-a-foreign-government-australian-federal-police-want-to-hear-from-you/t5e2srqo1")
     md_categories = ['Named Entity Recognition', 'Sentiment Analysis', 'Article Summariser (top 3 sentences)']
     nlp_task = st.selectbox("Select the algorithm you would like to use", md_categories)
 
