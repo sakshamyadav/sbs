@@ -106,8 +106,7 @@ def summarise_article(article, num_sentences=3):
     """
 
     #tokenize the article text into sentences
-    doc = nlp(article) 
-    sentences = doc.sents
+    sentences = sent_tokenize(article)
 
     words = preprocess_article(article)
 
