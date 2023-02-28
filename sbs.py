@@ -62,6 +62,7 @@ def get_article(url):
     article = article.replace('gt', ' ')
     article = article.replace('apos', ' ')
     article = article.replace('x2019', ' ')
+    article = article.replace('x2013', ' ')
 
     return headline, article
 
