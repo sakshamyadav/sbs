@@ -20,7 +20,7 @@ st.title("Metadata Generation from SBS Articles")
 #get article from url
 def get_article(url):
     """
-    Summarize an article by extracting the most important sentences.
+    Get Article from URL.
 
     :param url: string, the url of the article
     :return: (headline, article): (string, string), headline and article texts
@@ -30,9 +30,9 @@ def get_article(url):
     soup = BeautifulSoup(r.text, 'html.parser')
     p = soup.prettify()
 
+    #find headline text
     end = False
     startindex = p.find('"headline":"')
-
     i = startindex + 12
     headline = ''
     while True:
@@ -41,11 +41,10 @@ def get_article(url):
         if p[i] == '"':
             break
 
+    #find article text
     startindex = p.find('"articleBody":"')
-
     end = False
     i = startindex + 15
-
     article = ''
     while True:
         article += p[i]
@@ -53,6 +52,7 @@ def get_article(url):
         if p[i] == '"':
             break
 
+    #clean up text by removing unwanted html elements
     article = article.replace('amp;', ' ')
     article = article.replace('.', ' ')
     article = article.replace(',', ' ')
@@ -63,10 +63,10 @@ def get_article(url):
 
     return headline, article
 
-
+#preprocess article by removing stopwords
 def preprocess_article(article):
     """
-    Summarize an article by extracting the most important sentences.
+    Preprocess article by removing stopwords
 
     :param article: string, article text
     :return: list, tokenised list of words in the article
@@ -79,10 +79,10 @@ def preprocess_article(article):
 
     return tokens
 
-
+#perform named entity recognition on article
 def perform_ner(article):
     """
-    Summarize an article by extracting the most important sentences.
+    Performed named entity recognition on article
 
     :param article: string, article text
     :return: list, all entities in the article and their respective types
@@ -95,30 +95,30 @@ def perform_ner(article):
 
     return entities
 
-
-def summarize_article(article, num_sentences=3):
+#summarise article in 'num_sentences' sentences
+def summarise_article(article, num_sentences=3):
     """
-    Summarize an article by extracting the most important sentences.
+    Summarise article in 'num_sentences' sentences
 
     :param article: string, the full text of the article
     :param num_sentences: int, the number of sentences to include in the summary (default=3)
     :return: string, the summary of the article
     """
 
-    # Tokenize the article text into sentences
+    #tokenize the article text into sentences
     sentences = sent_tokenize(article)
 
+    words = preprocess_article(article)
 
-    # Calculate the word frequency for each word in the article
+    #calculate the word frequency for each word in the article
     word_freq = {}
-    for word in word_tokenize(article.lower()):
-        if word not in stopwords and word.isalpha():
-            if word not in word_freq:
-                word_freq[word] = 1
-            else:
-                word_freq[word] += 1
+    for word in words:
+        if word not in word_freq:
+            word_freq[word] = 1
+        else:
+            word_freq[word] += 1
 
-    # Calculate the sentence score for each sentence
+    #calculate the sentence score for each sentence
     sentence_scores = {}
     for sentence in sentences:
         for word in word_tokenize(sentence.lower()):
@@ -128,18 +128,18 @@ def summarize_article(article, num_sentences=3):
                 else:
                     sentence_scores[sentence] += word_freq[word]
 
-    # Get the top N sentences with the highest scores
+    #get the top N sentences with the highest scores
     summary_sentences = nlargest(num_sentences, sentence_scores, key=sentence_scores.get)
 
-    # Return the summary as a string
+    #return the summary as a string
     summary = ' '.join(summary_sentences)
 
     return summary
 
-
+#analyse sentiment in headline by extracting polarity and subjectivity
 def analyse_sentiment(headline):
     """
-    Summarize an article by extracting the most important sentences.
+    Analyse sentiment in headline by extracting polarity and subjectivity.
 
     :param headline: string, article headline text
     :return: (polarity, subjectivity): (int,int), polarity and subjectivity of the article headline
@@ -151,6 +151,7 @@ def analyse_sentiment(headline):
 
     return polarity, subjectivity
 
+#create main streamlit form to accept inputs
 with st.form("main form"):
     url = st.text_input('Enter SBS News Article URL')
     md_categories = ['Named Entity Recognition', 'Sentiment Analysis', 'Article Summariser']
@@ -158,18 +159,19 @@ with st.form("main form"):
 
     submitted = st.form_submit_button("Submit")
 
+#choose NLP algorithm based on user selection
 if submitted:
     headline, article = get_article(url)
     st.header(headline)
     if nlp_task == "Named Entity Recognition":
-        ents = perform_ner(article)
-        st.write(ents)
+        entities = perform_ner(article)
+        st.write(entities)
 
     elif nlp_task == "Sentiment Analysis":
         p, s = analyse_sentiment(headline)
         st.write(f"Polarity: {p:.2f}")
-        st.write(f"subjectivity: {s:.2f}")
+        st.write(f"Subjectivity: {s:.2f}")
 
     elif nlp_task == "Article Summariser":
-        out = summarize_article(article)
-        st.write(out)
+        summary = summarise_article(article)
+        st.write(summary)
