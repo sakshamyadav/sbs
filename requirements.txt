@@ -1,8 +1,6 @@
 beautifulsoup4==4.11.1
 nltk==3.8.1
-spacy==3.5.0
-spacy-legacy==3.0.12
-spacy-loggers==1.0.4
+spacy==2.2.0
 streamlit==1.17.0
 textblob==0.17.1
 en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz
